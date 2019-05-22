@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dll": "webpack --config script/webpack.dll.config"
   },
   "repository": {
     "type": "git",
