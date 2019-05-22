@@ -34,7 +34,7 @@
     "webpack-bundle-analyzer": "^3.3.2"
   },
   "bin": {
-    "react-tools": "./bin/"
+    "react-tools": "./bin/react-tools.js"
   },
   "files": [
     "script"
