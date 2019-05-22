@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/chenlizan/react-tools#readme",
   "dependencies": {
+    "commander": "^2.20.0",
     "copy-webpack-plugin": "^5.0.3",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-webpack-include-assets-plugin": "^2.0.0",

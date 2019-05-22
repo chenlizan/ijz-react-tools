@@ -1,24 +1,26 @@
 #!/usr/bin/env node
 
-function usage() {
-    console.log('Usage:');
-    console.log('  dll');
-}
+const program = require('commander');
+const webpack = require('webpack');
+const dll_config = require('../script/webpack.dll.config');
 
-var args = process.argv.slice(2);
+// 定义版本和参数选项
+program
+    .version('0.1.0', '-v, --version')
+    .option('dll', 'build dll');
 
-if (args.indexOf('--help') >= 0) {
-    usage();
-    process.exit(0);
-}
-var command = args.shift();
+// 必须在.parse()之前，因为node的emit()是即时的
+program.on('--help', function(){
+    console.log('  Examples:');
+    console.log('');
+    console.log('    this is an example');
+    console.log('');
+});
 
-switch (command) {
-    case 'dll':
-        console.log('dll');
-        break;
+program.parse(process.argv);
 
-    default:
-        usage();
-        process.exit(1);
+if(program.dll) {
+    console.log('building dll');
+    const compiler = webpack(dll_config);
+    compiler.run(()=>{});
 }
