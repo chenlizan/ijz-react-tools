@@ -1,5 +1,24 @@
-'use strict';
+#!/usr/bin/env node
 
-const args = process.argv.slice(2);
+function usage() {
+    console.log('Usage:');
+    console.log('  dll');
+}
 
-console.log(args);
+var args = process.argv.slice(2);
+
+if (args.indexOf('--help') >= 0) {
+    usage();
+    process.exit(0);
+}
+var command = args.shift();
+
+switch (command) {
+    case 'dll':
+        console.log('dll');
+        break;
+
+    default:
+        usage();
+        process.exit(1);
+}
