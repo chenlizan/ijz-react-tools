@@ -16,7 +16,7 @@
     "url": "https://github.com/chenlizan/react-tools/issues"
   },
   "homepage": "https://github.com/chenlizan/react-tools#readme",
-  "devDependencies": {
+  "dependencies": {
     "copy-webpack-plugin": "^5.0.3",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-webpack-include-assets-plugin": "^2.0.0",
@@ -37,6 +37,7 @@
     "react-tools": "./bin/react-tools.js"
   },
   "files": [
+    "bin",
     "script"
   ]
 }
