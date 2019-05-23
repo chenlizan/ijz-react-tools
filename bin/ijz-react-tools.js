@@ -7,10 +7,9 @@ const version = require('../package').version;
 
 program
     .version(version, '-v, --version')
-    .option('dll', 'build dll')
-    .option('dev', 'dev')
-    .option('prod', 'prod');
-
+    .option('dll', 'Builds the dll for development')
+    .option('dev', 'Runs the app in development mode')
+    .option('prod', 'Builds the app for production');
 
 program.parse(process.argv);
 
