@@ -34,7 +34,7 @@
     "webpack-bundle-analyzer": "^3.3.2"
   },
   "bin": {
-    "react-tools": "./bin/react-tools.js"
+    "ijz-react-tools": "./bin/ijz-react-tools.js"
   },
   "files": [
     "bin",
