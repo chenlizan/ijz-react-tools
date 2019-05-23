@@ -20,7 +20,7 @@ const clientConfig = {
         historyApiFallback: true
     },
     devtool: 'eval-source-map',
-    entry: ['babel-polyfill', path.resolve(__dirname, 'src/index')],
+    entry: ['babel-polyfill', resolveApp('src/index')],
     output: {
         chunkFilename: 'chunk.[chunkhash:5].js',
         filename: '[name].js',
@@ -73,7 +73,7 @@ const clientConfig = {
             },
             {
                 test: /\.css$/,
-                exclude: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                exclude: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [{
@@ -98,7 +98,7 @@ const clientConfig = {
             },
             {
                 test: /\.css$/,
-                include: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                include: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: ['css-loader']
@@ -106,7 +106,7 @@ const clientConfig = {
             },
             {
                 test: /\.less$/,
-                exclude: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                exclude: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [{
@@ -131,7 +131,7 @@ const clientConfig = {
             },
             {
                 test: /\.less/,
-                include: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                include: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: ['css-loader', 'less-loader']
@@ -147,8 +147,8 @@ const clientConfig = {
             'process.env': {NODE_ENV: JSON.stringify('development')}
         }),
         new webpack.DllReferencePlugin({
-            context: path.join(__dirname, '.', 'dll'),
-            manifest: require('./dll/vendor-manifest.json')
+            context: resolveApp( '.dll'),
+            manifest: require(resolveApp('dll/vendor-manifest.json'))
         }),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('[name].[contenthash:5].css'),
