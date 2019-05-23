@@ -17,15 +17,17 @@ program.parse(process.argv);
 if (program.dll) {
     console.info('start building dll');
     const script = 'webpack.dll.config';
-    spawn('webpack', ['--config', path.join(__dirname + '/../scripts/' + script)], {stdio: 'inherit'});
+    spawn('cross-env', ['NODE_ENV=development', 'webpack', '--config', path.join(__dirname + '/../scripts/' + script)], {stdio: 'inherit'});
 }
 
-if(program.dev){
-
+if (program.dev) {
+    console.info('start building dll');
+    const script = 'webpack.dll.config';
+    spawn('cross-env', ['NODE_ENV=development', 'webpack-dev-server', '--config', path.join(__dirname + '/../scripts/' + script)], {stdio: 'inherit'});
 }
 
-if(program.prod) {
+if (program.prod) {
     console.info('start building dll');
     const script = 'webpack.prod.config';
-    spawn('webpack', ['--config', path.join(__dirname + '/../scripts/' + script)], {stdio: 'inherit'});
+    spawn('cross-env', ['NODE_ENV=production', 'webpack', '--config', path.join(__dirname + '/../scripts/' + script)], {stdio: 'inherit'});
 }
