@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const webpack = require('webpack');
 const dll_config = require('../script/webpack.dll.config');
+const spawn = require('cross-spawn');
 
 // 定义版本和参数选项
 program
@@ -21,6 +21,5 @@ program.parse(process.argv);
 
 if(program.dll) {
     console.log('building dll');
-    const compiler = webpack(dll_config);
-    compiler.run(()=>{});
+    spawn('webpack', ['--config', 'webpack.dll.config'], { stdio: 'inherit' });
 }
