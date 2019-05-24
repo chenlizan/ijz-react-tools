@@ -46,17 +46,6 @@ const clientConfig = {
                 }]
             },
             {
-                test: /\.tsx?$/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            transpileOnly: true,
-                        }
-                    }
-                ]
-            },
-            {
                 test: /\.(js|jsx)$/,
                 use: {
                     loader: 'babel-loader',
