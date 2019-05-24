@@ -8,12 +8,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const config = require('./config');
 
 const PORT = 3000;
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
-const resolveModule = relativePath => path.resolve(appDirectory, 'node_modules/', relativePath);
+const resolveModule = relativePath => path.resolve(appDirectory, 'node_modules', relativePath);
 
 const clientConfig = {
     devServer: {

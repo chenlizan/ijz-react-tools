@@ -1,19 +1,23 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveModule = relativePath => path.resolve(appDirectory, 'node_modules', relativePath);
+
 const clientConfig = {
     entry: {
-        client: [path.resolve(__dirname, 'src/index')],
+        client: [resolveApp('src/index')],
         vendor: ['babel-polyfill', 'react', 'react-dom', 'react-redux', 'react-router-dom', 'redux', 'redux-actions']
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: resolveApp('dist'),
         chunkFilename: 'chunk.[chunkhash:5].js',
         filename: '[name].js',
         publicPath: './'
@@ -38,17 +42,6 @@ const clientConfig = {
                 }]
             },
             {
-                test: /\.tsx?$/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            transpileOnly: true,
-                        }
-                    }
-                ]
-            },
-            {
                 test: /\.(js|jsx)$/,
                 use: {
                     loader: 'babel-loader',
@@ -65,7 +58,7 @@ const clientConfig = {
             },
             {
                 test: /\.css$/,
-                exclude: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                exclude: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [{
@@ -78,7 +71,7 @@ const clientConfig = {
                             localIdentName: '[path][name]__[local]--[hash:base64:5]'
                         }
                     }, {
-                        loader: require.resolve('postcss-loader'),
+                        loader: 'postcss-loader',
                         options: {
                             ident: 'postcss',
                             plugins: [
@@ -91,7 +84,7 @@ const clientConfig = {
             },
             {
                 test: /\.css$/,
-                include: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                include: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [{
@@ -104,7 +97,7 @@ const clientConfig = {
             },
             {
                 test: /\.less$/,
-                exclude: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                exclude: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [{
@@ -117,7 +110,7 @@ const clientConfig = {
                             localIdentName: '[path][name]__[local]--[hash:base64:5]'
                         }
                     }, {
-                        loader: require.resolve('postcss-loader'),
+                        loader: 'postcss-loader',
                         options: {
                             ident: 'postcss',
                             plugins: [
@@ -125,12 +118,15 @@ const clientConfig = {
                                 require('autoprefixer')({flexbox: 'no-2009'})
                             ]
                         }
-                    }, 'less-loader']
+                    }, {
+                        loader: "less-loader",
+                        options: {javascriptEnabled: true}
+                    }]
                 })
             },
             {
                 test: /\.less/,
-                include: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'src/assets')],
+                include: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [{
@@ -138,13 +134,25 @@ const clientConfig = {
                         options: {
                             minimize: true
                         }
-                    }, 'less-loader']
+                    }, {
+                        loader: "less-loader",
+                        options: {javascriptEnabled: true}
+                    }]
                 })
             }
         ]
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.json', '.jsx']
+        alias: {
+            "yylib-ui": resolveModule('yylib-quick-mobile/dist'), //组件库
+            "yylib-utils": resolveModule('yylib-quick-mobile/dist/utils'), //工具库
+            "yylib-handler": resolveModule('yylib-quick-mobile/dist/crud/handler'), //组件库提供的模板代码
+            'pub-styles': resolveModule('ijz-mobile/dist/styles/index.less'), //i建造模板公共样式文件
+            'ijz-mobile': resolveModule('ijz-mobile/dist'), //i建造模板代码
+            'ijz-mobile/utils': resolveModule('ijz-mobile/dist/utils'), //i建造模板工具
+            'YYCreatePage': resolveModule('yylib-quick-mobile/dist/yylib/quickdev/YYCreatePage.js') // 设计器页面
+        },
+        extensions: ['.js', '.json', '.jsx']
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -173,7 +181,6 @@ const clientConfig = {
                 warnings: true
             }
         }),
-        new BundleAnalyzerPlugin(),
         new ProgressBarPlugin()
     ],
     node: {
