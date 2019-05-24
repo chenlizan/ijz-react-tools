@@ -13,6 +13,7 @@ const PORT = 3000;
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveModule = relativePath => path.resolve(appDirectory, 'node_modules/', relativePath);
 
 const clientConfig = {
     devServer: {
@@ -74,7 +75,7 @@ const clientConfig = {
                             localIdentName: '[path][name]__[local]--[hash:base64:5]'
                         }
                     }, {
-                        loader: require.resolve('postcss-loader'),
+                        loader: 'postcss-loader',
                         options: {
                             ident: 'postcss',
                             plugins: [
@@ -107,7 +108,7 @@ const clientConfig = {
                             localIdentName: '[path][name]__[local]--[hash:base64:5]'
                         }
                     }, {
-                        loader: require.resolve('postcss-loader'),
+                        loader: 'postcss-loader',
                         options: {
                             ident: 'postcss',
                             plugins: [
@@ -115,7 +116,10 @@ const clientConfig = {
                                 require('autoprefixer')({flexbox: 'no-2009'})
                             ]
                         }
-                    }, 'less-loader']
+                    }, {
+                        loader: "less-loader",
+                        options: {javascriptEnabled: true}
+                    }]
                 })
             },
             {
@@ -123,20 +127,32 @@ const clientConfig = {
                 include: [resolveApp('node_modules'), resolveApp('src/assets')],
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
-                    use: ['css-loader', 'less-loader']
+                    use: ['css-loader', {
+                        loader: "less-loader",
+                        options: {javascriptEnabled: true}
+                    }]
                 })
             }
         ]
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.json', '.jsx']
+        alias: {
+            "yylib-ui": resolveModule('yylib-quick-mobile/dist'), //组件库
+            "yylib-utils": resolveModule('yylib-quick-mobile/dist/utils'), //工具库
+            "yylib-handler": resolveModule('yylib-quick-mobile/dist/crud/handler'), //组件库提供的模板代码
+            'pub-styles': resolveModule('ijz-mobile/dist/styles/index.less'), //i建造模板公共样式文件
+            'ijz-mobile': resolveModule('ijz-mobile/dist'), //i建造模板代码
+            'ijz-mobile/utils': resolveModule('ijz-mobile/dist/utils'), //i建造模板工具
+            'YYCreatePage': resolveModule('yylib-quick-mobile/dist/yylib/quickdev/YYCreatePage.js') // 设计器页面
+        },
+        extensions: ['.js', '.json', '.jsx']
     },
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {NODE_ENV: JSON.stringify('development')}
         }),
         new webpack.DllReferencePlugin({
-            context: resolveApp( '.dll'),
+            context: resolveApp('.dll'),
             manifest: require(resolveApp('dll/vendor-manifest.json'))
         }),
         new webpack.HotModuleReplacementPlugin(),
