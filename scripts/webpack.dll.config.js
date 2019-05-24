@@ -10,7 +10,7 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 const dll = {
     entry: {
-        vendor: ['react', 'react-dom', 'react-redux', 'react-router-dom', 'redux', 'redux-actions']
+        vendor: ['react', 'react-dom', 'react-redux', 'react-router', 'redux', 'redux-actions']
     },
     output: {
         path: resolveApp('dll'),
