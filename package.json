@@ -62,8 +62,7 @@
     "redux-saga": "^0.16.2",
     "style-loader": "^0.21.0",
     "webpack": "^3.12.0",
-    "webpack-dev-server": "^2.11.5",
-    "yylib-quick-mobile": "0.0.44"
+    "webpack-dev-server": "^2.11.5"
   },
   "bin": {
     "ijz-react-tools": "./bin/ijz-react-tools.js"
