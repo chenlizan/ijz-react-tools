@@ -1,15 +1,15 @@
-# ijz-react-tools
+# react-boilerplate-cli
 
 ### install
 ```
-npm install https://github.com/chenlizan/ijz-react-tools.git
+npm install https://github.com/chenlizan/react-boilerplate-cli.git
 ```
 
 ### usage
 ```
-ijz-react-tools dll
+react-boilerplate-cli dll
 
-ijz-react-tools dev
+react-boilerplate-cli dev
 
-ijz-react-tools prod
+react-boilerplate-cli prod
 ```
