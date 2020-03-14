@@ -89,7 +89,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "bin": {
-    "react-boilerplate-cli": "./bin/react-boilerplate-tools.js"
+    "react-boilerplate-tools": "./bin/react-boilerplate-tools.js"
   },
   "files": [
     "bin",
