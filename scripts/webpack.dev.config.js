@@ -145,7 +145,7 @@ const clientConfig = {
         new HtmlWebpackIncludeAssetsPlugin({assets: ['../dll/vendor.dll.js'], append: false}),
         new StylelintPlugin({configFile: '.stylelintrc', files: '**/*.(c|le)ss', fix: true}),
         new webpack.HotModuleReplacementPlugin(),
-        new OpenBrowserPlugin({url: `http://localhost:${config.PORT}`, browser: 'chrome'}),
+        new OpenBrowserPlugin({url: `http://localhost:${config.PORT || 3000}`}),
         new ProgressBarPlugin()
     ],
     node: {
