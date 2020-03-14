@@ -21,8 +21,8 @@ const resolveModule = relativePath => path.resolve(appDirectory, 'node_modules',
 const clientConfig = {
     mode: 'production',
     entry: {
-        client: [resolveApp('src/index')],
-        vendor: ['babel-polyfill', 'react', 'react-dom', 'react-redux', 'react-router-dom', 'redux', 'redux-actions']
+        client: ['@babel/polyfill', resolveApp('src/index')],
+        vendor: ['react', 'react-dom', 'react-redux', 'react-router-dom', 'redux', 'redux-actions']
     },
     output: {
         path: resolveApp('dist'),

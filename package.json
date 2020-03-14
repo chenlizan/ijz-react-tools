@@ -94,6 +94,7 @@
   },
   "files": [
     "bin",
-    "scripts"
+    "scripts",
+    "template"
   ]
 }

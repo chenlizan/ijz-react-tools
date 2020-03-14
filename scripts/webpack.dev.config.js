@@ -21,7 +21,7 @@ const clientConfig = {
         historyApiFallback: true
     },
     devtool: 'eval-source-map',
-    entry: ['babel-polyfill', resolveApp('src/index')],
+    entry: ['@babel/polyfill', resolveApp('src/index')],
     output: {
         chunkFilename: 'chunk.[chunkhash:5].js',
         filename: '[name].js',
@@ -145,7 +145,7 @@ const clientConfig = {
         new HtmlWebpackIncludeAssetsPlugin({assets: ['../dll/vendor.dll.js'], append: false}),
         new StylelintPlugin({configFile: '.stylelintrc', files: '**/*.(c|le)ss', fix: true}),
         new webpack.HotModuleReplacementPlugin(),
-        new OpenBrowserPlugin({url: `http://localhost:${PORT}`, browser: 'chrome'}),
+        new OpenBrowserPlugin({url: `http://localhost:${config.PORT}`, browser: 'chrome'}),
         new ProgressBarPlugin()
     ],
     node: {
