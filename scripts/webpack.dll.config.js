@@ -9,8 +9,9 @@ const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 const dll = {
+    mode: 'development',
     entry: {
-        vendor: ['react', 'react-dom', 'react-redux', 'react-router', 'redux', 'redux-actions']
+        vendor: ['react', 'react-dom', 'react-redux', 'react-router-dom', 'redux', 'redux-actions']
     },
     output: {
         path: resolveApp('dll'),
@@ -22,8 +23,8 @@ const dll = {
     },
     plugins: [
         new webpack.DllPlugin({
-            context: resolveApp( '.dll'),
-            path: resolveApp( 'dll/[name]-manifest.json'),
+            context: resolveApp('.dll'),
+            path: resolveApp('dll/[name]-manifest.json'),
             name: '[name]_[chunkhash:5]'
         }),
         new ProgressBarPlugin()

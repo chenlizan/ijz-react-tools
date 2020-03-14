@@ -1,17 +1,25 @@
 'use strict';
 
 const fs = require('fs');
+const isWsl = require('is-wsl');
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const safePostCssParser = require('postcss-safe-parser');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
+const TerserPlugin = require('terser-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const resolveModule = relativePath => path.resolve(appDirectory, 'node_modules', relativePath);
 
 const clientConfig = {
+    mode: 'production',
     entry: {
         client: [resolveApp('src/index')],
         vendor: ['babel-polyfill', 'react', 'react-dom', 'react-redux', 'react-router-dom', 'redux', 'redux-actions']
@@ -22,170 +30,201 @@ const clientConfig = {
         filename: '[name].js',
         publicPath: './'
     },
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    parse: {
+                        ecma: 8,
+                    },
+                    compress: {
+                        ecma: 5,
+                        warnings: false,
+                        comparisons: false,
+                        inline: 2,
+                    },
+                    mangle: {
+                        safari10: true,
+                    },
+                    output: {
+                        ecma: 5,
+                        comments: false,
+                        ascii_only: true,
+                    },
+                },
+                parallel: !isWsl,
+                cache: true,
+                sourceMap: false,
+            }),
+            new OptimizeCSSAssetsPlugin({
+                cssProcessorOptions: {
+                    parser: safePostCssParser
+                },
+            }),
+        ],
+        splitChunks: {
+            chunks: 'all'
+        },
+        runtimeChunk: true,
+    },
     module: {
         rules: [
             {
-                test: /\.(png|jpg|gif)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            limit: 8192
-                        }
-                    }
-                ]
-            },
-            {
-                test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
+                test: /\.(js|jsx)$/,
                 use: [{
-                    loader: 'file-loader',
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
+                        plugins: [
+                            ['@babel/plugin-proposal-decorators', {'legacy': true}],
+                            ['@babel/plugin-proposal-class-properties', {'loose': true}],
+                            ['import', {'libraryName': 'antd', 'style': 'css'}, 'ant'],
+                            ['import', {'libraryName': 'antd-mobile', 'style': 'css'}, 'ant-mobile'],
+                            ['lodash']
+                        ]
+                    }
                 }]
             },
             {
-                test: /\.(js|jsx)$/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['env', 'es2015', 'react', 'stage-0'],
-                        plugins: [
-                            ['import', [
-                                {'libraryName': 'antd', 'style': 'css'},
-                                {'libraryName': 'antd-mobile', 'style': 'css'}
-                            ]], 'lodash', 'transform-decorators-legacy'
-                        ]
-                    }
-                }
+                test: /\.tsx?$/,
+                use: [{
+                    loader: 'ts-loader',
+                    options: {transpileOnly: true,}
+                }]
+            },
+            {
+                test: /\.(png|jpg|gif)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {limit: 8192}
+                }]
+            },
+            {
+                test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
+                use: [{loader: 'file-loader'}]
             },
             {
                 test: /\.css$/,
                 exclude: [resolveApp('node_modules'), resolveApp('src/assets')],
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [{
-                        loader: 'css-loader',
-                        options: {
-                            importLoaders: 1,
-                            minimize: true,
-                            modules: true,
-                            namedExport: true,
-                            localIdentName: '[path][name]__[local]--[hash:base64:5]'
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        publicPath: (resourcePath, context) => {
+                            return path.relative(path.dirname(resourcePath), context) + '../../';
                         }
-                    }, {
-                        loader: 'postcss-loader',
-                        options: {
-                            ident: 'postcss',
-                            plugins: [
-                                require('postcss-flexbugs-fixes'),
-                                require('autoprefixer')({flexbox: 'no-2009'})
-                            ]
+                    }
+                }, {
+                    loader: 'css-loader',
+                    options: {
+                        importLoaders: 1,
+                        modules: {
+                            getLocalIdent: getCSSModuleLocalIdent
                         }
-                    }]
-                })
+                    }
+                }, {
+                    loader: require.resolve('postcss-loader'),
+                    options: {
+                        ident: 'postcss',
+                        plugins: [
+                            require('postcss-flexbugs-fixes'),
+                            require('autoprefixer')({flexbox: 'no-2009'})
+                        ]
+                    }
+                }]
             },
             {
                 test: /\.css$/,
                 include: [resolveApp('node_modules'), resolveApp('src/assets')],
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [{
-                        loader: 'css-loader',
-                        options: {
-                            minimize: true
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        publicPath: (resourcePath, context) => {
+                            return path.relative(path.dirname(resourcePath), context) + '../../';
                         }
-                    }]
-                })
+                    }
+                }, {
+                    loader: 'css-loader'
+                }]
             },
             {
                 test: /\.less$/,
                 exclude: [resolveApp('node_modules'), resolveApp('src/assets')],
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [{
-                        loader: 'css-loader',
-                        options: {
-                            importLoaders: 1,
-                            minimize: true,
-                            modules: true,
-                            namedExport: true,
-                            localIdentName: '[path][name]__[local]--[hash:base64:5]'
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        publicPath: (resourcePath, context) => {
+                            return path.relative(path.dirname(resourcePath), context) + '../../';
                         }
-                    }, {
-                        loader: 'postcss-loader',
-                        options: {
-                            ident: 'postcss',
-                            plugins: [
-                                require('postcss-flexbugs-fixes'),
-                                require('autoprefixer')({flexbox: 'no-2009'})
-                            ]
+                    }
+                }, {
+                    loader: 'css-loader',
+                    options: {
+                        importLoaders: 2,
+                        modules: {
+                            getLocalIdent: getCSSModuleLocalIdent
                         }
-                    }, {
-                        loader: "less-loader",
-                        options: {javascriptEnabled: true}
-                    }]
-                })
+                    }
+                }, {
+                    loader: require.resolve('postcss-loader'),
+                    options: {
+                        ident: 'postcss',
+                        plugins: [
+                            require('postcss-flexbugs-fixes'),
+                            require('autoprefixer')({flexbox: 'no-2009'})
+                        ]
+                    }
+                }, {
+                    loader: 'less-loader',
+                    options: {javascriptEnabled: true}
+                }]
             },
             {
                 test: /\.less/,
                 include: [resolveApp('node_modules'), resolveApp('src/assets')],
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [{
-                        loader: 'css-loader',
-                        options: {
-                            minimize: true
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        publicPath: (resourcePath, context) => {
+                            return path.relative(path.dirname(resourcePath), context) + '../../';
                         }
-                    }, {
-                        loader: "less-loader",
-                        options: {javascriptEnabled: true}
-                    }]
-                })
+                    }
+                }, {
+                    loader: 'css-loader'
+                }, {
+                    loader: 'less-loader',
+                    options: {javascriptEnabled: true}
+                }]
             }
         ]
     },
     resolve: {
-        alias: {
-            "yylib-ui": resolveModule('yylib-quick-mobile/dist'), //组件库
-            "yylib-utils": resolveModule('yylib-quick-mobile/dist/utils'), //工具库
-            "yylib-handler": resolveModule('yylib-quick-mobile/dist/crud/handler'), //组件库提供的模板代码
-            'pub-styles': resolveModule('ijz-mobile/dist/styles/index.less'), //i建造模板公共样式文件
-            'ijz-mobile': resolveModule('ijz-mobile/dist'), //i建造模板代码
-            'ijz-mobile/utils': resolveModule('ijz-mobile/dist/utils'), //i建造模板工具
-            'YYCreatePage': resolveModule('yylib-quick-mobile/dist/yylib/quickdev/YYCreatePage.js') // 设计器页面
-        },
-        extensions: ['.js', '.json', '.jsx']
+        extensions: ['.ts', '.tsx', '.js', '.json', '.jsx']
     },
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {NODE_ENV: JSON.stringify('production')}
         }),
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            minChunks: Infinity,
-        }),
+        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            favicon: 'public/favicon.ico',
             filename: 'index.html',
-            template: 'public/index.html'
+            template: 'public/index.html',
+            minify: false
         }),
-        new ExtractTextPlugin('[name].[contenthash:5].css'),
-        new webpack.optimize.UglifyJsPlugin({
-            uglifyOptions: {
-                ecma: 8,
-                compress: {
-                    comparisons: false
-                },
-                output: {
-                    ascii_only: true
-                },
-                warnings: true
-            }
+        new MiniCssExtractPlugin({
+            filename: 'static/css/[name].css',
+            chunkFilename: 'static/css/[name].[chunkhash:5].chunk.css'
+        }),
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'static'
         }),
         new ProgressBarPlugin()
     ],
     node: {
+        module: 'empty',
         dgram: 'empty',
+        dns: 'mock',
         fs: 'empty',
+        http2: 'empty',
         net: 'empty',
         tls: 'empty',
         child_process: 'empty'

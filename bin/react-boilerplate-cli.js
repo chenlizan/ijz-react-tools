@@ -23,7 +23,7 @@ program.parse(process.argv);
 
 if (typeof projectName !== 'undefined') {
     console.log(
-        `  ${chalk.cyan(program.name())} ${chalk.green('<project-directory>')}`
+        `  ${chalk.cyan(program.name())} ${chalk.green(projectName)}`
     );
 }
 
