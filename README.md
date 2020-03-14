@@ -2,7 +2,7 @@
 
 ### install
 ```
-npm install https://github.com/chenlizan/react-boilerplate-cli.git
+npm install --save-dev react-boilerplate-cli
 ```
 
 ### usage

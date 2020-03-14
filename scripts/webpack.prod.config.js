@@ -13,6 +13,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const TerserPlugin = require('terser-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const config = require('./config');
 
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
@@ -28,7 +29,7 @@ const clientConfig = {
         path: resolveApp('dist'),
         chunkFilename: 'chunk.[chunkhash:5].js',
         filename: '[name].js',
-        publicPath: './'
+        publicPath: config.PublicPath || './'
     },
     optimization: {
         minimizer: [

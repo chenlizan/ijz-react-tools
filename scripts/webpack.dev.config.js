@@ -25,7 +25,7 @@ const clientConfig = {
     output: {
         chunkFilename: 'chunk.[chunkhash:5].js',
         filename: '[name].js',
-        publicPath: '/'
+        publicPath: config.PublicPath || '/'
     },
     module: {
         rules: [
