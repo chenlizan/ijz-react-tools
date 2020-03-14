@@ -1,15 +1,18 @@
-# react-boilerplate-cli
+# react-boilerplate-tools
+React boilerplate tools.
 
-### install
-```
-npm install --save-dev react-boilerplate-cli
-```
+
+Installation
+------------
+[![NPM](https://nodei.co/npm/react-boilerplate-tools.png)](https://nodei.co/npm/react-boilerplate-tools/)
 
 ### usage
 ```
-react-boilerplate-cli --dll
+react-boilerplate-tools --init
 
-react-boilerplate-cli --strat
+react-boilerplate-tools --dll
 
-react-boilerplate-cli --build
+react-boilerplate-tools --strat
+
+react-boilerplate-tools --build
 ```

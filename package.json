@@ -1,18 +1,18 @@
 {
   "name": "react-boilerplate-tools",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "",
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chenlizan/react-boilerplate-cli.git"
+    "url": "git+https://github.com/chenlizan/react-boilerplate-tools.git"
   },
   "author": "chenlizan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chenlizan/react-boilerplate-cli/issues"
+    "url": "https://github.com/chenlizan/react-boilerplate-tools/issues"
   },
-  "homepage": "https://github.com/chenlizan/react-boilerplate-cli#readme",
+  "homepage": "https://github.com/chenlizan/react-boilerplate-tools#readme",
   "dependencies": {
     "@babel/core": "^7.7.5",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
@@ -50,6 +50,7 @@
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^2.3.0",
     "file-loader": "^5.0.2",
+    "fs-extra": "^8.1.0",
     "html-webpack-include-assets-plugin": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
     "immutable": "^4.0.0-rc.12",
@@ -88,7 +89,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "bin": {
-    "react-boilerplate-cli": "./bin/react-boilerplate-cli.js"
+    "react-boilerplate-cli": "./bin/react-boilerplate-tools.js"
   },
   "files": [
     "bin",
