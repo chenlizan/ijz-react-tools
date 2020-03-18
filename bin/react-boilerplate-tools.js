@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 
 const chalk = require('chalk');
-const fs = require('fs-extra')
+const fs = require('fs-extra');
+const jsonFormat = require('json-format');
 const path = require('path');
 const program = require('commander');
 const spawn = require('cross-spawn');
 const version = require('../package').version;
+
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 program
     .version(version, '-v, --version')
@@ -17,8 +21,14 @@ program
 program.parse(process.argv);
 
 if (program.init) {
-    console.info(chalk.blue('Initialize project directory'));
-    fs.copySync(path.join(__dirname + '/../template'), fs.realpathSync(process.cwd()));
+    console.info(chalk.green('Initialize project directory'));
+    const package = fs.readJsonSync(resolveApp('package.json'));
+    package.scripts['init'] = "react-boilerplate-tools --init";
+    package.scripts['dll'] = "react-boilerplate-tools --dll";
+    package.scripts['start'] = "react-boilerplate-tools --start";
+    package.scripts['build'] = "react-boilerplate-tools --build";
+    fs.writeFileSync(resolveApp('package.json'), jsonFormat(package));
+    fs.copySync(path.join(__dirname + '/../template'), appDirectory);
 }
 
 if (program.dll) {
